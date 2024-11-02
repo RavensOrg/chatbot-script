@@ -142,6 +142,8 @@ function sendMessage() {
       formData.append('file', fileInput.files[0]);
   }
 
+  console.log("sended data: ", { messageText, fname: fileInput.files[0]})
+
   fetch('https://api.ravens.ir/api/v1/search', {
       method: 'POST',
       headers: {
@@ -180,9 +182,7 @@ function handleFileAttachment() {
       reader.readAsDataURL(file);
   } else {
       addMessageToChat('User', `Attached: ${file.name}`);
-  }
-
-  fileInput.value = '';  // Clear the file input
+  } // Clear the file input
 }
 
 function addMessageToChat(sender, message) {
