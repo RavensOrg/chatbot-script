@@ -1,6 +1,6 @@
-(function() {
+function initializeRavens(apiKey) {
     // Fetch the API key from the HTML attribute
-    const apiKey = document.body.getAttribute('data-ravens-api-key');
+    // const apiKey = document.body.getAttribute('data-ravens-api-key');
 
     if (!apiKey) {
         console.error('API key is missing!');
@@ -201,4 +201,4 @@ function addMessageToChat(sender, message) {
   chatMessages.appendChild(messageElement);
   chatMessages.scrollTop = chatMessages.scrollHeight;  // Auto-scroll to the latest message
 }
-})();
+}
