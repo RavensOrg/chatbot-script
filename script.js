@@ -144,7 +144,7 @@ function sendMessage() {
 
   console.log("sended data: ", { messageText, fname: fileInput.files[0]})
 
-  fetch('https://api.ravens.ir/api/v1/search', {
+  fetch('http://localhost:5000/api/v1/search', {
       method: 'POST',
       headers: {
           'ravens-key': `${apiKey}`
@@ -155,6 +155,9 @@ function sendMessage() {
   .then(data => {
       const botResponse = data.response || 'Message sent successfully!';
       addMessageToChat('Bot', botResponse);
+      if (data.products && data.products.length > 0) {
+        addProductCards(data.products); // Display product cards
+    }
   })
   .catch(error => {
       console.error('Error sending message:', error);
@@ -195,10 +198,75 @@ function addMessageToChat(sender, message) {
       messageElement.innerHTML = `<span style="background-color: #0c0917; color: white; padding: 5px 10px; border-radius: 10px;">${message}</span>`;
   } else {
       messageElement.style.textAlign = 'left';
-      messageElement.innerHTML = `<span style="background-color: #f1f1f1; padding: 5px 10px; border-radius: 10px;">${message}</span>`;
+      messageElement.innerHTML = `<p style="background-color: #0c0917; color: white; padding: 5px 10px; border-radius: 10px;">${message}</p>`;
   }
 
   chatMessages.appendChild(messageElement);
   chatMessages.scrollTop = chatMessages.scrollHeight;  // Auto-scroll to the latest message
 }
+}
+
+function addProductCards(products) {
+    // Create a container for product cards
+    const productContainer = document.createElement('div');
+    productContainer.style.display = 'flex';
+    productContainer.style.flexWrap = 'wrap';
+    productContainer.style.marginTop = '10px';
+    productContainer.style.borderTop = '1px solid #ccc';
+    productContainer.style.padding = '10px 0';
+
+    products.forEach(product => {
+        const { title, link, description, imgUrl } = product.payload;
+
+        // Create a card
+        const card = document.createElement('div');
+        card.style.width = '100px';
+        card.style.margin = '5px';
+        card.style.border = '1px solid #ccc';
+        card.style.borderRadius = '5px';
+        card.style.overflow = 'hidden';
+        card.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+        card.style.cursor = 'pointer';
+
+        // Add image
+        const img = document.createElement('img');
+        img.src = imgUrl;
+        img.alt = title;
+        img.style.width = '100%';
+        img.style.height = '70px';
+        img.style.objectFit = 'cover';
+
+        // Add title
+        const cardTitle = document.createElement('div');
+        cardTitle.innerText = title;
+        cardTitle.style.fontSize = '14px';
+        cardTitle.style.fontWeight = 'bold';
+        cardTitle.style.padding = '5px';
+
+        // Add description
+        const cardDesc = document.createElement('div');
+        cardDesc.innerText = description;
+        cardDesc.style.fontSize = '12px';
+        cardDesc.style.color = '#555';
+        cardDesc.style.padding = '0 5px 5px';
+
+        // Append elements to the card
+        card.appendChild(img);
+        card.appendChild(cardTitle);
+        card.appendChild(cardDesc);
+
+        // Add click handler to open link
+        card.addEventListener('click', () => {
+            window.open(link, '_blank');
+        });
+
+        // Append card to the container
+        productContainer.appendChild(card);
+    });
+
+    const chatMessages = document.getElementById('chat-messages');
+
+    // Append the product container to the chat
+    chatMessages.appendChild(productContainer);
+    chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to show products
 }
